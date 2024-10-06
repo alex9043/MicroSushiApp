@@ -1,14 +1,23 @@
 package ru.alex9043.accountservice.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.alex9043.accountservice.service.AccountService;
 
 @RestController
 @RequestMapping("/api/v1/account")
+@RequiredArgsConstructor
 public class AccountController {
+
+    private final AccountService accountService;
+
     @GetMapping("test")
     public String test() {
         return "Hello from AccountService!";
+    }
+
+    @PostMapping("register")
+    public String register(@RequestBody AccountRequestDto accountRequestDto) {
+        return accountService.register(accountRequestDto);
     }
 }

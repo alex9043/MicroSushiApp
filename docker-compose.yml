@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  registry-service:
+    build:
+      context: ./registry-service
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - registry-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - registry-service
+      - account-bd
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
+      - POSTGRES_URL=account-bd
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=MSA_account_db
+  account-bd:
+    image: postgres
+    restart: always
+    ports:
+      - "54321:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=MSA_account_db
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
