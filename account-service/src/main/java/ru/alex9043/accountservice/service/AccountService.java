@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.alex9043.accountservice.controller.AccountRequestDto;
+import ru.alex9043.accountservice.dto.AccountRequestDto;
 import ru.alex9043.accountservice.model.Account;
 import ru.alex9043.accountservice.model.Role;
 import ru.alex9043.accountservice.repository.AccountRepository;

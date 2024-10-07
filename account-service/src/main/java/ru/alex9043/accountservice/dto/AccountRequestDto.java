@@ -1,4 +1,4 @@
-package ru.alex9043.accountservice.controller;
+package ru.alex9043.accountservice.dto;
 
 import lombok.Data;
 

@@ -2,6 +2,7 @@ package ru.alex9043.accountservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.alex9043.accountservice.dto.AccountRequestDto;
 import ru.alex9043.accountservice.service.AccountService;
 
 @RestController

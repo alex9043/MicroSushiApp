@@ -46,6 +46,16 @@ services:
       - POSTGRES_DB=MSA_account_db
     networks:
       - app-network
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - registry-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
 networks:
   app-network:
     driver: bridge
