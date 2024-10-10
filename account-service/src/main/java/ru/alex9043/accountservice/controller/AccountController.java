@@ -1,24 +1,35 @@
 package ru.alex9043.accountservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.alex9043.accountservice.dto.AccountRequestDto;
+import ru.alex9043.accountservice.dto.AccountResponseDto;
+import ru.alex9043.accountservice.dto.LoginRequestDTO;
+import ru.alex9043.accountservice.dto.RegisterRequestDTO;
+import ru.alex9043.accountservice.dto.TokensResponseDTO;
 import ru.alex9043.accountservice.service.AccountService;
 
 @RestController
 @RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
+@Slf4j
 public class AccountController {
 
     private final AccountService accountService;
 
-    @GetMapping("test")
-    public String test() {
-        return "Hello from AccountService!";
+    @GetMapping
+    public AccountResponseDto getAccount(@RequestHeader("Authorization") String token) {
+        log.info("Get account for token: {}", token);
+        return accountService.getAccount(token);
     }
 
     @PostMapping("register")
-    public String register(@RequestBody AccountRequestDto accountRequestDto) {
-        return accountService.register(accountRequestDto);
+    public TokensResponseDTO register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        return accountService.register(registerRequestDTO);
+    }
+
+    @PostMapping("login")
+    public TokensResponseDTO login(@RequestBody LoginRequestDTO registerRequestDTO) {
+        return accountService.login(registerRequestDTO);
     }
 }

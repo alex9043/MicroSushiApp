@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class UserRequestDTO {
-    private String username;
+public class SubjectResponseDto {
+    private String subject;
     private List<String> roles;
 }

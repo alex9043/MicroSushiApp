@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.alex9043.authservice.dto.SubjectResponseDto;
+import ru.alex9043.authservice.dto.TokenRequestDto;
 import ru.alex9043.authservice.dto.TokensResponseDTO;
 import ru.alex9043.authservice.dto.UserRequestDTO;
 import ru.alex9043.authservice.service.AuthService;
@@ -16,13 +18,18 @@ import ru.alex9043.authservice.service.AuthService;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/generate-tokens")
+    @PostMapping("subject")
+    public SubjectResponseDto getSubject(@RequestBody TokenRequestDto token) {
+        return authService.getSubject(token);
+    }
+
+    @PostMapping("generate-tokens")
     public TokensResponseDTO generateTokens(@RequestBody UserRequestDTO userRequestDTO) {
         return authService.generateTokens(userRequestDTO);
     }
 
-    @PostMapping("/validate-token")
-    public boolean validateToken(@RequestBody String token) {
+    @PostMapping("validate-token")
+    public boolean validateToken(@RequestBody TokenRequestDto token) {
         return authService.validateToken(token);
     }
 }

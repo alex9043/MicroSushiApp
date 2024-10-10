@@ -42,6 +42,11 @@ public class Account {
     @Column(name = "roles", nullable = false)
     private Set<Role> roles = new LinkedHashSet<>();
 
+    @ElementCollection
+    @Column(name = "refresh_token")
+    @CollectionTable(name = "Account_refreshToken", joinColumns = @JoinColumn(name = "owner_id"))
+    private Set<String> refreshToken = new LinkedHashSet<>();
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
