@@ -3,6 +3,7 @@ package ru.alex9043.gatewayservice.filter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,8 +24,14 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
+            HttpMethod method = exchange.getRequest().getMethod();
 
-            if (config.getExcludedPaths().stream().anyMatch(path::startsWith)) {
+            System.out.println("Filter is started");
+
+            boolean isExcluded = config.getExcludedPaths().stream()
+                    .anyMatch(excluded -> path.startsWith(excluded.getPath()) && method == excluded.getMethod());
+
+            if (isExcluded) {
                 return chain.filter(exchange);
             }
 
@@ -57,14 +64,43 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 
     public static class Config {
         private String validatePath;
-        private List<String> excludedPaths;
+        private List<ExcludedPath> excludedPaths;
 
         public String getValidatePath() {
             return validatePath;
         }
 
-        public List<String> getExcludedPaths() {
+        public void setValidatePath(String validatePath) {
+            this.validatePath = validatePath;
+        }
+
+        public List<ExcludedPath> getExcludedPaths() {
             return excludedPaths;
+        }
+
+        public void setExcludedPaths(List<ExcludedPath> excludedPaths) {
+            this.excludedPaths = excludedPaths;
+        }
+
+        public static class ExcludedPath {
+            private HttpMethod method;
+            private String path;
+
+            public HttpMethod getMethod() {
+                return method;
+            }
+
+            public void setMethod(HttpMethod method) {
+                this.method = method;
+            }
+
+            public String getPath() {
+                return path;
+            }
+
+            public void setPath(String path) {
+                this.path = path;
+            }
         }
     }
 }

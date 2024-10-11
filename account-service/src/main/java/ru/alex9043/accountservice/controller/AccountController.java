@@ -3,10 +3,7 @@ package ru.alex9043.accountservice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.alex9043.accountservice.dto.AccountResponseDto;
-import ru.alex9043.accountservice.dto.LoginRequestDTO;
-import ru.alex9043.accountservice.dto.RegisterRequestDTO;
-import ru.alex9043.accountservice.dto.TokensResponseDTO;
+import ru.alex9043.accountservice.dto.*;
 import ru.alex9043.accountservice.service.AccountService;
 
 @RestController
@@ -31,5 +28,10 @@ public class AccountController {
     @PostMapping("login")
     public TokensResponseDTO login(@RequestBody LoginRequestDTO registerRequestDTO) {
         return accountService.login(registerRequestDTO);
+    }
+
+    @PostMapping("refresh-token")
+    public TokensResponseDTO refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {
+        return accountService.refreshToken(refreshTokenDto);
     }
 }

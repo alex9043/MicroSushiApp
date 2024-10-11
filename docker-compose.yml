@@ -56,6 +56,31 @@ services:
       - registry-service
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - registry-service
+      - product-bd
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
+      - POSTGRES_URL=product-bd
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=MSA_product_db
+  product-bd:
+    image: postgres
+    restart: always
+    ports:
+      - "54322:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=MSA_product_db
+    networks:
+      - app-network
 networks:
   app-network:
     driver: bridge

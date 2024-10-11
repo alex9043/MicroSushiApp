@@ -15,6 +15,8 @@ import ru.alex9043.accountservice.model.Account;
 import ru.alex9043.accountservice.model.Role;
 import ru.alex9043.accountservice.repository.AccountRepository;
 
+import java.util.LinkedHashSet;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -49,6 +51,10 @@ public class AccountService {
         );
 
         TokensResponseDTO tokens = response.getBody();
+
+        account.setRefreshToken(new LinkedHashSet<>());
+        accountRepository.save(account);
+
         assert tokens != null;
         account.getRefreshToken().add(tokens.getRefreshToken());
         accountRepository.save(account);
@@ -100,5 +106,13 @@ public class AccountService {
         SubjectResponseDto subject = response.getBody();
         assert subject != null;
         return subject.getSubject();
+    }
+
+    public TokensResponseDTO refreshToken(RefreshTokenDto refreshTokenDto) {
+        Account account = accountRepository.findByRefreshTokenContains(refreshTokenDto.getRefreshToken()).orElseThrow(
+                () -> new IllegalArgumentException("Invalid refresh token")
+        );
+
+        return getTokens(account);
     }
 }
