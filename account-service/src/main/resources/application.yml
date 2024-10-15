@@ -20,3 +20,12 @@ eureka:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
 server:
   port: 8081
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
