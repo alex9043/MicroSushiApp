@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+/logs/
+/loki/boltdb-shipper-active/
+/loki/boltdb-shipper-cache/
+/loki/chunks/
+/loki/compactor/
+/loki/rules/
+/loki/wal/

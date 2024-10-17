@@ -14,12 +14,17 @@ services:
     image: grafana/promtail:2.9.1
     volumes:
       - ./promtail/config:/etc/promtail
-      - /var/log:/var/log
+      - ./logs:/var/log/microservices_logs:rw
     command: -config.file=/etc/promtail/config.yml
     networks:
       - app-network
     depends_on:
       - loki
+      - registry-service
+      - gateway-service
+      - auth-service
+      - account-service
+      - product-service
   prometheus:
     image: prom/prometheus:v2.44.0
     volumes:
@@ -53,6 +58,8 @@ services:
     build:
       context: ./registry-service
       dockerfile: Dockerfile
+    volumes:
+      - ./logs/registry-service:/var/log/registry-service
     ports:
       - "8761:8761"
     networks:
@@ -61,6 +68,8 @@ services:
     build:
       context: ./gateway-service
       dockerfile: Dockerfile
+    volumes:
+      - ./logs/gateway-service:/var/log/gateway-service
     ports:
       - "8080:8080"
     networks:
@@ -73,6 +82,8 @@ services:
     build:
       context: ./account-service
       dockerfile: Dockerfile
+    volumes:
+      - ./logs/account-service:/var/log/account-service
     networks:
       - app-network
     depends_on:
@@ -98,6 +109,8 @@ services:
     build:
       context: ./auth-service
       dockerfile: Dockerfile
+    volumes:
+      - ./logs/auth-service:/var/log/auth-service
     networks:
       - app-network
     depends_on:
@@ -108,6 +121,8 @@ services:
     build:
       context: ./product-service
       dockerfile: Dockerfile
+    volumes:
+      - ./logs/product-service:/var/log/product-service
     networks:
       - app-network
     depends_on:
