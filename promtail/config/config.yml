@@ -12,32 +12,32 @@ scrape_configs:
       - targets: [ ]
         labels:
           job: "registry-service"
-          path: /var/log/microservices_logs/registry-service/*.log
+          __path__: "/var/log/microservices_logs/registry-service/registry-service.log"
 
   - job_name: "gateway-service"
     static_configs:
       - targets: [ ]
         labels:
           job: "gateway-service"
-          path: /var/log/microservices_logs/gateway-service/*.log
+          __path__: "/var/log/microservices_logs/gateway-service/gateway-service.log"
 
   - job_name: "auth-service"
     static_configs:
       - targets: [ ]
         labels:
           job: "auth-service"
-          path: /var/log/microservices_logs/auth-service/*.log
+          __path__: "/var/log/microservices_logs/auth-service/auth-service.log"
 
   - job_name: "account-service"
     static_configs:
       - targets: [ ]
         labels:
           job: "account-service"
-          path: /var/log/microservices_logs/account-service/*.log
+          __path__: "/var/log/microservices_logs/account-service/account-service.log"
 
   - job_name: "product-service"
     static_configs:
       - targets: [ ]
         labels:
           job: "product-service"
-          path: /var/log/microservices_logs/product-service/*.log
+          __path__: "/var/log/microservices_logs/product-service/product-service.log"
