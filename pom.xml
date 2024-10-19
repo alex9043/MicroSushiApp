@@ -15,6 +15,7 @@
     <name>MicroSushiApp</name>
     <description>MicroSushiApp</description>
     <modules>
+        <module>common-dto</module>
         <module>registry-service</module>
         <module>gateway-service</module>
         <module>account-service</module>

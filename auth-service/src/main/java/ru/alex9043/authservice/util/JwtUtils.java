@@ -11,6 +11,7 @@ import ru.alex9043.authservice.dto.TokenRequestDto;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -30,7 +31,7 @@ public class JwtUtils {
                 .getBody();
     }
 
-    public String generateAccessToken(String username, List<String> roles) {
+    public String generateAccessToken(String username, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles)

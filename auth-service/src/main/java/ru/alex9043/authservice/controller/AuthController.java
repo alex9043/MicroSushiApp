@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alex9043.authservice.dto.SubjectResponseDto;
 import ru.alex9043.authservice.dto.TokenRequestDto;
-import ru.alex9043.authservice.dto.TokensResponseDTO;
-import ru.alex9043.authservice.dto.UserRequestDTO;
 import ru.alex9043.authservice.service.AuthService;
+import ru.alex9043.commondto.TokensResponseDTO;
+import ru.alex9043.commondto.UserRequestDTO;
 
 @RestController
 @RequestMapping("/api/v1/auth")

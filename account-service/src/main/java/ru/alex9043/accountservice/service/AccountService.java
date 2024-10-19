@@ -3,6 +3,8 @@ package ru.alex9043.accountservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -10,21 +12,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import ru.alex9043.accountservice.config.RabbitMQConfig;
 import ru.alex9043.accountservice.dto.*;
 import ru.alex9043.accountservice.model.Account;
 import ru.alex9043.accountservice.model.Role;
 import ru.alex9043.accountservice.repository.AccountRepository;
+import ru.alex9043.commondto.TokensResponseDTO;
+import ru.alex9043.commondto.UserRequestDTO;
 
 import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AccountService {
 
+    private final RabbitTemplate rabbitTemplate;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
+    @Value("${RABBITMQ_ROUTING_KEY}")
+    private String ROUTING_KEY;
     private final PasswordEncoder passwordEncoder;
 
     private HttpHeaders createHeaders() {
@@ -34,30 +43,22 @@ public class AccountService {
     }
 
     private TokensResponseDTO getTokens(Account account) {
-        HttpHeaders headers = createHeaders();
-        HttpEntity<UserRequestDTO> request = new HttpEntity<>(
-                UserRequestDTO.builder()
-                        .username(account.getPhone())
-                        .roles(account.getRoles())
-                        .build(),
-                headers
-        );
 
-        ResponseEntity<TokensResponseDTO> response = restTemplate.exchange(
-                "http://auth-service/api/v1/auth/generate-tokens",
-                HttpMethod.POST,
-                request,
-                TokensResponseDTO.class
-        );
-
-        TokensResponseDTO tokens = response.getBody();
+        TokensResponseDTO tokens = (TokensResponseDTO)
+                rabbitTemplate.convertSendAndReceive(
+                        RabbitMQConfig.EXCHANGE_NAME,
+                        ROUTING_KEY,
+                        new UserRequestDTO(account.getPhone(), account.getRoles().stream().map(
+                                Enum::toString
+                        ).collect(Collectors.toSet()))
+                );
+        assert tokens != null;
 
         account.setRefreshToken(new LinkedHashSet<>());
-        accountRepository.save(account);
 
-        assert tokens != null;
         account.getRefreshToken().add(tokens.getRefreshToken());
         accountRepository.save(account);
+
         return tokens;
     }
 
