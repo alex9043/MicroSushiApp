@@ -1,23 +1,24 @@
 package ru.alex9043.gatewayservice.filter;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import ru.alex9043.gatewayservice.dto.TokenRequestDto;
+import ru.alex9043.commondto.TokenRequestDto;
+import ru.alex9043.gatewayservice.config.RabbitMQConfig;
 
 import java.util.List;
 
 @Component
 public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFilter.Config> {
-    private final WebClient.Builder webClientBuilder;
+    private final RabbitTemplate rabbitTemplate;
 
-    public CustomAuthFilter(WebClient.Builder webClientBuilder) {
+    public CustomAuthFilter(RabbitTemplate rabbitTemplate) {
         super(Config.class);
-        this.webClientBuilder = webClientBuilder;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -43,22 +44,20 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 
             String token = authHeader.substring(7);
             System.out.println("Token in request - " + token);
-            System.out.println("Uri - " + config.getValidatePath());
 
-            return webClientBuilder.build()
-                    .post()
-                    .uri(config.getValidatePath())
-                    .bodyValue(new TokenRequestDto(token))
-                    .retrieve()
-                    .bodyToMono(Boolean.class)
-                    .flatMap(isValid -> {
-                        if (Boolean.TRUE.equals(isValid)) {
-                            return chain.filter(exchange);
-                        } else {
-                            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                            return exchange.getResponse().setComplete();
-                        }
-                    });
+            Boolean isValid = (Boolean)
+                    rabbitTemplate.convertSendAndReceive(
+                            RabbitMQConfig.AUTH_EXCHANGE_NAME,
+                            RabbitMQConfig.AUTH_ROUTING_KEY_VALIDATE,
+                            new TokenRequestDto(token)
+                    );
+
+            if (Boolean.TRUE.equals(isValid)) {
+                return chain.filter(exchange);
+            } else {
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
         });
     }
 

@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.alex9043.authservice.dto.SubjectResponseDto;
-import ru.alex9043.authservice.dto.TokenRequestDto;
 import ru.alex9043.authservice.service.AuthService;
+import ru.alex9043.commondto.SubjectResponseDto;
+import ru.alex9043.commondto.TokenRequestDto;
 import ru.alex9043.commondto.TokensResponseDTO;
 import ru.alex9043.commondto.UserRequestDTO;
 

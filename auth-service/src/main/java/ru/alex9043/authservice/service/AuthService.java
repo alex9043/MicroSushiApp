@@ -2,9 +2,9 @@ package ru.alex9043.authservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.alex9043.authservice.dto.SubjectResponseDto;
-import ru.alex9043.authservice.dto.TokenRequestDto;
 import ru.alex9043.authservice.util.JwtUtils;
+import ru.alex9043.commondto.SubjectResponseDto;
+import ru.alex9043.commondto.TokenRequestDto;
 import ru.alex9043.commondto.TokensResponseDTO;
 import ru.alex9043.commondto.UserRequestDTO;
 

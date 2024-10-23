@@ -12,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.alex9043.productservice.dto.SubjectResponseDto;
+import ru.alex9043.commondto.SubjectResponseDto;
 
 import java.io.IOException;
 import java.util.List;

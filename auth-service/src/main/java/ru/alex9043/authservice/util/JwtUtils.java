@@ -5,8 +5,8 @@ import io.jsonwebtoken.jackson.io.JacksonDeserializer;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.alex9043.authservice.dto.SubjectResponseDto;
-import ru.alex9043.authservice.dto.TokenRequestDto;
+import ru.alex9043.commondto.SubjectResponseDto;
+import ru.alex9043.commondto.TokenRequestDto;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -69,9 +69,6 @@ public class JwtUtils {
     public SubjectResponseDto getSubject(TokenRequestDto token) {
         Claims claims = extractClaims(token);
 
-        return SubjectResponseDto.builder()
-                .subject(claims.getSubject())
-                .roles(claims.get("roles", List.class))
-                .build();
+        return new SubjectResponseDto(claims.getSubject(), claims.get("roles", List.class));
     }
 }

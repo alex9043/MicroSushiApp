@@ -1,7 +1,10 @@
-package ru.alex9043.gatewayservice.dto;
+package ru.alex9043.commondto;
 
 public class TokenRequestDto {
     private String token;
+
+    public TokenRequestDto() {
+    }
 
     public TokenRequestDto(String token) {
         this.token = token;
