@@ -8,7 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.alex9043.commondto.TokenRequestDto;
+import ru.alex9043.commondto.ValidationResponseDTO;
 import ru.alex9043.gatewayservice.config.RabbitMQConfig;
+import ru.alex9043.gatewayservice.exception.JwtValidationException;
 
 import java.util.List;
 
@@ -44,19 +46,26 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 
             String token = authHeader.substring(7);
             System.out.println("Token in request - " + token);
+            Boolean isValid = false;
 
-            Boolean isValid = (Boolean)
-                    rabbitTemplate.convertSendAndReceive(
-                            RabbitMQConfig.AUTH_EXCHANGE_NAME,
-                            RabbitMQConfig.AUTH_ROUTING_KEY_VALIDATE,
-                            new TokenRequestDto(token)
-                    );
+            ValidationResponseDTO response;
 
-            if (Boolean.TRUE.equals(isValid)) {
+            try {
+                response = (ValidationResponseDTO)
+                        rabbitTemplate.convertSendAndReceive(
+                                RabbitMQConfig.AUTH_EXCHANGE_NAME,
+                                RabbitMQConfig.AUTH_ROUTING_KEY_VALIDATE,
+                                new TokenRequestDto(token)
+                        );
+            } catch (Exception e) {
+                throw new JwtValidationException("Error occurred while validating token", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+
+            if (response != null && response.isValid()) {
                 return chain.filter(exchange);
             } else {
-                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                return exchange.getResponse().setComplete();
+                throw new JwtValidationException(response != null ? response.getErrorMessage() : "Unknown error", HttpStatus.FORBIDDEN);
             }
         });
     }

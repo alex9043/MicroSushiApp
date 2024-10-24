@@ -19,8 +19,6 @@ spring:
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
-    template:
-      routing-key: ${RABBITMQ_ROUTING_KEY}
 eureka:
   client:
     service-url:

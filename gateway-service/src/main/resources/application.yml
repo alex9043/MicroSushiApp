@@ -1,31 +1,31 @@
 spring:
   application:
     name: gateway-service
-    rabbitmq:
-      host: ${RABBITMQ_HOST}
-      port: ${RABBITMQ_PORT}
-      username: ${RABBITMQ_USERNAME}
-      password: ${RABBITMQ_PASSWORD}
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
   cloud:
     gateway:
-        routes:
-          - id: account-service
-            uri: lb://account-service
-            predicates:
-              - Path=/api/v1/account/**
-            filters:
-              - name: CustomAuthFilter
-                args:
-                  validatePath: http://auth-service/api/v1/auth/validate-token
-                  excludedPaths:
-                    - method: POST
-                      path: /api/v1/account/register
-                    - method: POST
-                      path: /api/v1/account/login
-                    - method: POST
-                      path: /api/v1/account/refresh-token
-          - id: auth-service
-            uri: lb://auth-service
+      routes:
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/v1/account/**
+          filters:
+            - name: CustomAuthFilter
+              args:
+                validatePath: http://auth-service/api/v1/auth/validate-token
+                excludedPaths:
+                  - method: POST
+                    path: /api/v1/account/register
+                  - method: POST
+                    path: /api/v1/account/login
+                  - method: POST
+                    path: /api/v1/account/refresh-token
+            - id: auth-service
+              uri: lb://auth-service
             predicates:
               - Path=/api/v1/auth/**
             filters:

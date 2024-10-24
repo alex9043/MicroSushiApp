@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alex9043.authservice.service.AuthService;
-import ru.alex9043.commondto.SubjectResponseDto;
-import ru.alex9043.commondto.TokenRequestDto;
-import ru.alex9043.commondto.TokensResponseDTO;
-import ru.alex9043.commondto.UserRequestDTO;
+import ru.alex9043.commondto.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -29,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("validate-token")
-    public boolean validateToken(@RequestBody TokenRequestDto token) {
+    public ValidationResponseDTO validateToken(@RequestBody TokenRequestDto token) {
         return authService.validateToken(token);
     }
 }

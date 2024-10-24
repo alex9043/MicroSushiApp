@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import ru.alex9043.authservice.config.RabbitMQConfig;
-import ru.alex9043.commondto.SubjectResponseDto;
-import ru.alex9043.commondto.TokenRequestDto;
-import ru.alex9043.commondto.TokensResponseDTO;
-import ru.alex9043.commondto.UserRequestDTO;
+import ru.alex9043.commondto.*;
 
 @Service
 @Slf4j
@@ -30,7 +27,7 @@ public class AuthMessageListener {
     }
 
     @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_VALIDATE)
-    public boolean validateToken(TokenRequestDto token) {
+    public ValidationResponseDTO validateToken(TokenRequestDto token) {
         return authService.validateToken(token);
     }
 }

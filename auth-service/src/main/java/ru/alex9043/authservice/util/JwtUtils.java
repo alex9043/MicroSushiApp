@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.alex9043.commondto.SubjectResponseDto;
 import ru.alex9043.commondto.TokenRequestDto;
+import ru.alex9043.commondto.ValidationResponseDTO;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -49,21 +50,26 @@ public class JwtUtils {
                 .compact();
     }
 
-    public boolean validateToken(String authToken) {
+    public ValidationResponseDTO validateToken(String authToken) {
+        String validationMessage = null;
         log.info("token - {}", authToken);
         try {
             Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(authToken);
-            return true;
+            return new ValidationResponseDTO(true, validationMessage);
         } catch (ExpiredJwtException e) {
-            log.info("Expired_JWT_TOKEN");
+            validationMessage = "Expired_JWT_TOKEN";
+            log.info(validationMessage);
         } catch (UnsupportedJwtException | MalformedJwtException e) {
-            log.info("INVALID_JWT_TOKEN");
+            validationMessage = "INVALID_JWT_TOKEN";
+            log.info(validationMessage);
         } catch (IllegalArgumentException e) {
-            log.info("Token validation error {}", e.getMessage());
+            validationMessage = "Token validation error " + e.getMessage();
+            log.info(validationMessage);
         } catch (Exception e) {
-            log.info("Token error {}", e.getMessage());
+            validationMessage = "Token error " + e.getMessage();
+            log.info(validationMessage);
         }
-        return false;
+        return new ValidationResponseDTO(false, validationMessage);
     }
 
     public SubjectResponseDto getSubject(TokenRequestDto token) {

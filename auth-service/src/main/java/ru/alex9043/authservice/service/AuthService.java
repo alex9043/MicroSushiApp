@@ -3,10 +3,7 @@ package ru.alex9043.authservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.alex9043.authservice.util.JwtUtils;
-import ru.alex9043.commondto.SubjectResponseDto;
-import ru.alex9043.commondto.TokenRequestDto;
-import ru.alex9043.commondto.TokensResponseDTO;
-import ru.alex9043.commondto.UserRequestDTO;
+import ru.alex9043.commondto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +16,7 @@ public class AuthService {
                 jwtUtils.generateRefreshToken());
     }
 
-    public boolean validateToken(TokenRequestDto token) {
+    public ValidationResponseDTO validateToken(TokenRequestDto token) {
         return jwtUtils.validateToken(token.getToken());
     }
 
