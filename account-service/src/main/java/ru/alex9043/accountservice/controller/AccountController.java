@@ -1,12 +1,13 @@
 package ru.alex9043.accountservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.alex9043.accountservice.dto.AccountResponseDto;
-import ru.alex9043.accountservice.dto.LoginRequestDTO;
+import ru.alex9043.accountservice.dto.LoginRequestDto;
 import ru.alex9043.accountservice.dto.RefreshTokenDto;
-import ru.alex9043.accountservice.dto.RegisterRequestDTO;
+import ru.alex9043.accountservice.dto.RegisterRequestDto;
 import ru.alex9043.accountservice.service.AccountService;
 import ru.alex9043.commondto.TokensResponseDTO;
 
@@ -25,12 +26,12 @@ public class AccountController {
     }
 
     @PostMapping("register")
-    public TokensResponseDTO register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+    public TokensResponseDTO register(@Valid @RequestBody RegisterRequestDto registerRequestDTO) {
         return accountService.register(registerRequestDTO);
     }
 
     @PostMapping("login")
-    public TokensResponseDTO login(@RequestBody LoginRequestDTO registerRequestDTO) {
+    public TokensResponseDTO login(@Valid @RequestBody LoginRequestDto registerRequestDTO) {
         return accountService.login(registerRequestDTO);
     }
 

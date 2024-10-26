@@ -1,5 +1,6 @@
 package ru.alex9043.productservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ProductsResponseDto createProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+    public ProductsResponseDto createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
         return productService.createProduct(productRequestDTO);
     }
 }

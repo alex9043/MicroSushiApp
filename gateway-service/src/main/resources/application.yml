@@ -24,23 +24,23 @@ spring:
                     path: /api/v1/account/login
                   - method: POST
                     path: /api/v1/account/refresh-token
-            - id: auth-service
-              uri: lb://auth-service
-            predicates:
-              - Path=/api/v1/auth/**
-            filters:
-              - name: BlockPublicAccessFilter
-          - id: product-service
-            uri: lb://product-service
-            predicates:
-              - Path=/api/v1/product/**
-            filters:
-              - name: CustomAuthFilter
-                args:
-                  validatePath: http://auth-service/api/v1/auth/validate-token
-                  excludedPaths:
-                    - method: GET
-                      path: /api/v1/product
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - name: BlockPublicAccessFilter
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/product/**
+          filters:
+            - name: CustomAuthFilter
+              args:
+                validatePath: http://auth-service/api/v1/auth/validate-token
+                excludedPaths:
+                  - method: GET
+                    path: /api/v1/product
 server:
   port: 8080
 eureka:

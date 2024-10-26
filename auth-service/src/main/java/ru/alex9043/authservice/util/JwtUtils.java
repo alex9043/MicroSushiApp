@@ -59,15 +59,19 @@ public class JwtUtils {
         } catch (ExpiredJwtException e) {
             validationMessage = "Expired_JWT_TOKEN";
             log.info(validationMessage);
+            log.info(e.getMessage());
         } catch (UnsupportedJwtException | MalformedJwtException e) {
             validationMessage = "INVALID_JWT_TOKEN";
             log.info(validationMessage);
+            log.info(e.getMessage());
         } catch (IllegalArgumentException e) {
             validationMessage = "Token validation error " + e.getMessage();
             log.info(validationMessage);
+            log.info(e.getMessage());
         } catch (Exception e) {
             validationMessage = "Token error " + e.getMessage();
             log.info(validationMessage);
+            log.info(e.getMessage());
         }
         return new ValidationResponseDTO(false, validationMessage);
     }

@@ -24,8 +24,6 @@ public class ProductService {
 
     public ProductsResponseDto createProduct(ProductRequestDTO productRequestDTO) {
         Product product = modelMapper.map(productRequestDTO, Product.class);
-        log.info("Request - {}", productRequestDTO.toString());
-        log.info("Product - {}", product.toString());
         saveProductFields(productRequestDTO, product);
         return getProducts();
     }

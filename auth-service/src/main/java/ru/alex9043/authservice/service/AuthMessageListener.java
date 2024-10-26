@@ -14,19 +14,19 @@ public class AuthMessageListener {
 
     public final AuthService authService;
 
-    @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_TOKENS)
+    @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_TOKENS, containerFactory = "rabbitListenerContainerFactory")
     public TokensResponseDTO generateTokens(UserRequestDTO userRequest) {
         log.info("Received UserRequestDTO from RabbitMQ: {}", userRequest);
         return authService.generateTokens(userRequest);
     }
 
-    @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_SUBJECT)
+    @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_SUBJECT, containerFactory = "rabbitListenerContainerFactory")
     public SubjectResponseDto getSubject(TokenRequestDto token) {
         log.info("Received TokenRequestDto from RabbitMQ: {}", token.getToken());
         return authService.getSubject(token);
     }
 
-    @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_VALIDATE)
+    @RabbitListener(queues = RabbitMQConfig.AUTH_QUEUE_VALIDATE, containerFactory = "rabbitListenerContainerFactory")
     public ValidationResponseDTO validateToken(TokenRequestDto token) {
         return authService.validateToken(token);
     }

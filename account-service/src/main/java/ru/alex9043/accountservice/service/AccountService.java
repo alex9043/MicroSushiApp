@@ -3,14 +3,15 @@ package ru.alex9043.accountservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.alex9043.accountservice.config.RabbitMQConfig;
 import ru.alex9043.accountservice.dto.AccountResponseDto;
-import ru.alex9043.accountservice.dto.LoginRequestDTO;
+import ru.alex9043.accountservice.dto.LoginRequestDto;
 import ru.alex9043.accountservice.dto.RefreshTokenDto;
-import ru.alex9043.accountservice.dto.RegisterRequestDTO;
+import ru.alex9043.accountservice.dto.RegisterRequestDto;
 import ru.alex9043.accountservice.model.Account;
 import ru.alex9043.accountservice.model.Role;
 import ru.alex9043.accountservice.repository.AccountRepository;
@@ -20,6 +21,7 @@ import ru.alex9043.commondto.TokensResponseDTO;
 import ru.alex9043.commondto.UserRequestDTO;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,32 +35,52 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
     private TokensResponseDTO getTokens(Account account) {
-        TokensResponseDTO tokens = (TokensResponseDTO)
-                rabbitTemplate.convertSendAndReceive(
-                        RabbitMQConfig.AUTH_EXCHANGE_NAME,
-                        RabbitMQConfig.AUTH_ROUTING_KEY_TOKENS,
-                        new UserRequestDTO(account.getPhone(), account.getRoles().stream().map(
-                                Enum::toString
-                        ).collect(Collectors.toSet()))
-                );
+        try {
+            TokensResponseDTO tokens = (TokensResponseDTO)
+                    rabbitTemplate.convertSendAndReceive(
+                            RabbitMQConfig.AUTH_EXCHANGE_NAME,
+                            RabbitMQConfig.AUTH_ROUTING_KEY_TOKENS,
+                            new UserRequestDTO(account.getPhone(), account.getRoles().stream().map(
+                                    Enum::toString
+                            ).collect(Collectors.toSet()))
+                    );
 
-        account.setRefreshToken(new LinkedHashSet<>());
+            account.setRefreshToken(new LinkedHashSet<>());
 
-        account.getRefreshToken().add(tokens.getRefreshToken());
-        accountRepository.save(account);
+            if (tokens == null) {
+                throw new IllegalStateException("Auth service is unavailable.");
+            }
 
-        return tokens;
+            account.getRefreshToken().add(tokens.getRefreshToken());
+            accountRepository.save(account);
+
+            return tokens;
+        } catch (AmqpException e) {
+            throw new IllegalStateException("Service temporarily unavailable, please try again later.");
+        }
     }
 
-    public TokensResponseDTO register(RegisterRequestDTO registerRequestDTO) {
+    public TokensResponseDTO register(RegisterRequestDto registerRequestDTO) {
+        if (!Objects.equals(registerRequestDTO.getPassword(), registerRequestDTO.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords don't match");
+        }
+        if (accountRepository.findByPhone(registerRequestDTO.getPhone()).isPresent()) {
+            throw new IllegalArgumentException("Phone already exist");
+        }
+        if (accountRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already exist");
+        }
+        if (accountRepository.findByName(registerRequestDTO.getName()).isPresent()) {
+            throw new IllegalArgumentException("Name already exist");
+        }
         Account account = modelMapper.map(registerRequestDTO, Account.class);
         account.getRoles().add(Role.ROLE_USER);
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
+        account.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         accountRepository.save(account);
         return getTokens(account);
     }
 
-    public TokensResponseDTO login(LoginRequestDTO registerRequestDTO) {
+    public TokensResponseDTO login(LoginRequestDto registerRequestDTO) {
         Account account = accountRepository.findByPhone(registerRequestDTO.getPhone()).orElseThrow(
                 () -> new IllegalArgumentException("User not found")
         );
@@ -77,16 +99,23 @@ public class AccountService {
     }
 
     private String getSubject(String token) {
-        SubjectResponseDto response = (SubjectResponseDto)
-                rabbitTemplate.convertSendAndReceive(
-                        RabbitMQConfig.AUTH_EXCHANGE_NAME,
-                        RabbitMQConfig.AUTH_ROUTING_KEY_SUBJECT,
-                        new TokenRequestDto(token.substring(7))
-                );
+        try {
+            SubjectResponseDto response = (SubjectResponseDto)
+                    rabbitTemplate.convertSendAndReceive(
+                            RabbitMQConfig.AUTH_EXCHANGE_NAME,
+                            RabbitMQConfig.AUTH_ROUTING_KEY_SUBJECT,
+                            new TokenRequestDto(token.substring(7))
+                    );
 
-        assert response != null;
-        System.out.println("Response - " + response.getSubject());
-        return response.getSubject();
+
+            if (response == null) {
+                throw new IllegalStateException("Auth service is unavailable.");
+            }
+            System.out.println("Response - " + response.getSubject());
+            return response.getSubject();
+        } catch (AmqpException e) {
+            throw new IllegalStateException("Service temporarily unavailable, please try again later.");
+        }
     }
 
     public TokensResponseDTO refreshToken(RefreshTokenDto refreshTokenDto) {
