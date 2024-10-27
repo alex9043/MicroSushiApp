@@ -3,11 +3,8 @@ package ru.alex9043.accountservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.alex9043.accountservice.config.RabbitMQConfig;
 import ru.alex9043.accountservice.dto.AccountResponseDto;
 import ru.alex9043.accountservice.dto.LoginRequestDto;
 import ru.alex9043.accountservice.dto.RefreshTokenDto;
@@ -20,7 +17,6 @@ import ru.alex9043.commondto.TokenRequestDto;
 import ru.alex9043.commondto.TokensResponseDTO;
 import ru.alex9043.commondto.UserRequestDTO;
 
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -29,35 +25,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AccountService {
 
-    private final RabbitTemplate rabbitTemplate;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RabbitService rabbitService;
 
     private TokensResponseDTO getTokens(Account account) {
-        try {
-            TokensResponseDTO tokens = (TokensResponseDTO)
-                    rabbitTemplate.convertSendAndReceive(
-                            RabbitMQConfig.AUTH_EXCHANGE_NAME,
-                            RabbitMQConfig.AUTH_ROUTING_KEY_TOKENS,
-                            new UserRequestDTO(account.getPhone(), account.getRoles().stream().map(
-                                    Enum::toString
-                            ).collect(Collectors.toSet()))
-                    );
+        TokensResponseDTO tokens = rabbitService.getTokens(new UserRequestDTO(account.getPhone(), account.getRoles().stream().map(
+                Enum::toString
+        ).collect(Collectors.toSet())));
+        account.getRefreshToken().add(tokens.getRefreshToken());
+        accountRepository.save(account);
 
-            account.setRefreshToken(new LinkedHashSet<>());
-
-            if (tokens == null) {
-                throw new IllegalStateException("Auth service is unavailable.");
-            }
-
-            account.getRefreshToken().add(tokens.getRefreshToken());
-            accountRepository.save(account);
-
-            return tokens;
-        } catch (AmqpException e) {
-            throw new IllegalStateException("Service temporarily unavailable, please try again later.");
-        }
+        return tokens;
     }
 
     public TokensResponseDTO register(RegisterRequestDto registerRequestDTO) {
@@ -99,26 +79,12 @@ public class AccountService {
     }
 
     private String getSubject(String token) {
-        try {
-            SubjectResponseDto response = (SubjectResponseDto)
-                    rabbitTemplate.convertSendAndReceive(
-                            RabbitMQConfig.AUTH_EXCHANGE_NAME,
-                            RabbitMQConfig.AUTH_ROUTING_KEY_SUBJECT,
-                            new TokenRequestDto(token.substring(7))
-                    );
-
-
-            if (response == null) {
-                throw new IllegalStateException("Auth service is unavailable.");
-            }
-            System.out.println("Response - " + response.getSubject());
-            return response.getSubject();
-        } catch (AmqpException e) {
-            throw new IllegalStateException("Service temporarily unavailable, please try again later.");
-        }
+        SubjectResponseDto subject = rabbitService.getSubject(new TokenRequestDto(token.substring(7)));
+        return subject.getSubject();
     }
 
     public TokensResponseDTO refreshToken(RefreshTokenDto refreshTokenDto) {
+        // TODO validate refresh tokens and delete expired
         Account account = accountRepository.findByRefreshTokenContains(refreshTokenDto.getRefreshToken()).orElseThrow(
                 () -> new IllegalArgumentException("Invalid refresh token")
         );

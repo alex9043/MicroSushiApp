@@ -19,8 +19,8 @@ public class ProductController {
         return productService.getProducts();
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ProductsResponseDto createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
         return productService.createProduct(productRequestDTO);
     }

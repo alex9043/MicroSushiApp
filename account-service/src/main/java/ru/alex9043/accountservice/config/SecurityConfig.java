@@ -1,4 +1,4 @@
-package ru.alex9043.productservice.config;
+package ru.alex9043.accountservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,14 +11,13 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.alex9043.productservice.service.RabbitService;
+import ru.alex9043.accountservice.service.RabbitService;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final RabbitService rabbitService;
 
     @Bean
@@ -26,12 +25,15 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "/api/v1/product").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/account/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/account/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/account/refresh-token").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtTokenFilter(rabbitService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }

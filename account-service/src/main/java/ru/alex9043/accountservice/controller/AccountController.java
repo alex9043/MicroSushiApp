@@ -21,7 +21,6 @@ public class AccountController {
 
     @GetMapping
     public AccountResponseDto getAccount(@RequestHeader("Authorization") String token) {
-        log.info("Get account for token: {}", token);
         return accountService.getAccount(token);
     }
 

@@ -1,6 +1,5 @@
 package ru.alex9043.gatewayservice.filter;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -9,18 +8,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.alex9043.commondto.TokenRequestDto;
 import ru.alex9043.commondto.ValidationResponseDTO;
-import ru.alex9043.gatewayservice.config.RabbitMQConfig;
 import ru.alex9043.gatewayservice.exception.JwtValidationException;
+import ru.alex9043.gatewayservice.service.RabbitService;
 
 import java.util.List;
 
 @Component
 public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFilter.Config> {
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitService rabbitService;
 
-    public CustomAuthFilter(RabbitTemplate rabbitTemplate) {
+
+    public CustomAuthFilter(RabbitService rabbitService) {
         super(Config.class);
-        this.rabbitTemplate = rabbitTemplate;
+        this.rabbitService = rabbitService;
     }
 
     @Override
@@ -46,26 +46,13 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 
             String token = authHeader.substring(7);
             System.out.println("Token in request - " + token);
-            Boolean isValid = false;
 
-            ValidationResponseDTO response;
+            ValidationResponseDTO response = rabbitService.validate(new TokenRequestDto(token));
 
-            try {
-                response = (ValidationResponseDTO)
-                        rabbitTemplate.convertSendAndReceive(
-                                RabbitMQConfig.AUTH_EXCHANGE_NAME,
-                                RabbitMQConfig.AUTH_ROUTING_KEY_VALIDATE,
-                                new TokenRequestDto(token)
-                        );
-            } catch (Exception e) {
-                throw new JwtValidationException("Error occurred while validating token", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-
-            if (response != null && response.isValid()) {
+            if (response.isValid()) {
                 return chain.filter(exchange);
             } else {
-                throw new JwtValidationException(response != null ? response.getErrorMessage() : "Unknown error", HttpStatus.FORBIDDEN);
+                throw new JwtValidationException(response.getErrorMessage(), HttpStatus.FORBIDDEN);
             }
         });
     }
