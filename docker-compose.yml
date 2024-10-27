@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   rabbitmq:
@@ -99,6 +99,15 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
   account-service:
     build:
       context: ./account-service
@@ -125,6 +134,9 @@ services:
         condition: on-failure
         max_attempts: 3
         delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
   account-bd:
     image: postgres
     restart: always
@@ -142,6 +154,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./logs/auth-service:/var/log/auth-service
+      - ./ssh-keygen/ssh-keys:/ssh-keys
     networks:
       - app-network
     depends_on:
@@ -153,11 +166,14 @@ services:
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
     deploy:
-      replicas: 1
+      replicas: 3
       restart_policy:
         condition: on-failure
         max_attempts: 3
         delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
   product-service:
     build:
       context: ./product-service
@@ -184,6 +200,9 @@ services:
         condition: on-failure
         max_attempts: 3
         delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
   product-bd:
     image: postgres
     restart: always
@@ -198,3 +217,5 @@ services:
 networks:
   app-network:
     driver: bridge
+volumes:
+  ssh-keys:

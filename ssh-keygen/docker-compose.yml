@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  keygen:
+    build: .
+    volumes:
+      - ./ssh-keys:/ssh-keys
+    command: [ "/bin/sh", "-c", "openssl rand -base64 32 > /ssh-keys/secret.key" ]
+    restart: "no"

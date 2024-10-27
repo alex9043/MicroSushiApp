@@ -10,6 +10,9 @@ import ru.alex9043.commondto.TokenRequestDto;
 import ru.alex9043.commondto.ValidationResponseDTO;
 
 import javax.crypto.SecretKey;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,15 +21,26 @@ import java.util.Set;
 @Slf4j
 public class JwtUtils {
 
-    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final SecretKey PRIVATE_KEY;
+
     private static final Date ACCESS_EXPIRATION_TIME = new Date(System.currentTimeMillis() + 1000 * 60 * 60);
     private static final Date REFRESH_EXPIRATION_TIME = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
+
+    static {
+        try {
+            String keyContent = Files.readString(Path.of("/ssh-keys/secret.key")).trim();
+            PRIVATE_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(keyContent));
+        } catch (Exception e) {
+            throw new RuntimeException("Не удалось загрузить ключ", e);
+        }
+    }
+
 
     private static Claims extractClaims(TokenRequestDto token) {
         return Jwts.
                 parserBuilder()
                 .deserializeJsonWith(new JacksonDeserializer<>())
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(PRIVATE_KEY)
                 .build()
                 .parseClaimsJws(token.getToken())
                 .getBody();
@@ -38,7 +52,7 @@ public class JwtUtils {
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(ACCESS_EXPIRATION_TIME)
-                .signWith(SECRET_KEY)
+                .signWith(PRIVATE_KEY)
                 .compact();
     }
 
@@ -46,7 +60,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setIssuedAt(new Date())
                 .setExpiration(REFRESH_EXPIRATION_TIME)
-                .signWith(SECRET_KEY)
+                .signWith(PRIVATE_KEY)
                 .compact();
     }
 
@@ -54,7 +68,7 @@ public class JwtUtils {
         String validationMessage = null;
         log.info("token - {}", authToken);
         try {
-            Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(PRIVATE_KEY).build().parseClaimsJws(authToken);
             return new ValidationResponseDTO(true, validationMessage);
         } catch (ExpiredJwtException e) {
             validationMessage = "Expired_JWT_TOKEN";

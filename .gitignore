@@ -38,3 +38,4 @@ build/
 /loki/compactor/
 /loki/rules/
 /loki/wal/
+/ssh-keygen/ssh-keys/secret.key
