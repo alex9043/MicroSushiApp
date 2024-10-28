@@ -18,8 +18,11 @@ public class RabbitMQConfig {
     public static final String AUTH_EXCHANGE_NAME = "auth.exchange";
     public static final String AUTH_QUEUE_TOKENS = "auth.queue.tokens";
     public static final String AUTH_QUEUE_SUBJECT = "auth.queue.subject";
+    public static final String AUTH_QUEUE_VALIDATE = "auth.queue.validate";
     public static final String AUTH_ROUTING_KEY_TOKENS = "auth.routingKey.tokens";
     public static final String AUTH_ROUTING_KEY_SUBJECT = "auth.routingKey.subject";
+
+    public static final String AUTH_ROUTING_KEY_VALIDATE = "auth.routingKey.validate";
 
     @Bean
     public DirectExchange exchange() {
@@ -37,6 +40,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue validateQueue() {
+        return new Queue(AUTH_QUEUE_VALIDATE, true);
+    }
+
+    @Bean
     public Binding tokensBinding(Queue tokensQueue, DirectExchange exchange) {
         return BindingBuilder.bind(tokensQueue).to(exchange).with(AUTH_ROUTING_KEY_TOKENS);
     }
@@ -44,6 +52,11 @@ public class RabbitMQConfig {
     @Bean
     public Binding subjectBinding(Queue subjectQueue, DirectExchange exchange) {
         return BindingBuilder.bind(subjectQueue).to(exchange).with(AUTH_ROUTING_KEY_SUBJECT);
+    }
+
+    @Bean
+    public Binding validateBinding(Queue validateQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(validateQueue).to(exchange).with(AUTH_ROUTING_KEY_VALIDATE);
     }
 
     @Bean

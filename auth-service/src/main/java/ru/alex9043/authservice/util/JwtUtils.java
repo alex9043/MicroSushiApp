@@ -23,9 +23,6 @@ public class JwtUtils {
 
     private static final SecretKey PRIVATE_KEY;
 
-    private static final Date ACCESS_EXPIRATION_TIME = new Date(System.currentTimeMillis() + 1000 * 60 * 60);
-    private static final Date REFRESH_EXPIRATION_TIME = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
-
     static {
         try {
             String keyContent = Files.readString(Path.of("/ssh-keys/secret.key")).trim();
@@ -47,11 +44,12 @@ public class JwtUtils {
     }
 
     public String generateAccessToken(String username, Set<String> roles) {
+        log.info("Generating access token");
         return Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(ACCESS_EXPIRATION_TIME)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(PRIVATE_KEY)
                 .compact();
     }
@@ -59,14 +57,13 @@ public class JwtUtils {
     public String generateRefreshToken() {
         return Jwts.builder()
                 .setIssuedAt(new Date())
-                .setExpiration(REFRESH_EXPIRATION_TIME)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
                 .signWith(PRIVATE_KEY)
                 .compact();
     }
 
     public ValidationResponseDTO validateToken(String authToken) {
         String validationMessage = null;
-        log.info("token - {}", authToken);
         try {
             Jwts.parserBuilder().setSigningKey(PRIVATE_KEY).build().parseClaimsJws(authToken);
             return new ValidationResponseDTO(true, validationMessage);

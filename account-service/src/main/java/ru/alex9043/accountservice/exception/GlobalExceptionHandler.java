@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.alex9043.accountservice.dto.ErrorsResponse;
+import ru.alex9043.accountservice.dto.error.JwtValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,5 +56,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorsResponse.FieldError> handleIllegalStateException(IllegalStateException ex) {
         ErrorsResponse.FieldError response = new ErrorsResponse.FieldError(ex.getMessage(), LocalDateTime.now(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(JwtValidationException.class)
+    public ResponseEntity<ErrorsResponse.FieldError> handleJwtValidationException(JwtValidationException ex) {
+        ErrorsResponse.FieldError errorResponse = new ErrorsResponse.FieldError(ex.getMessage(), LocalDateTime.now(), ex.getStatus());
+        return new ResponseEntity<>(errorResponse, ex.getStatus());
     }
 }

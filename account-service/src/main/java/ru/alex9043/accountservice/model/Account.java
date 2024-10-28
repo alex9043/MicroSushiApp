@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -19,9 +20,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     private String name;
