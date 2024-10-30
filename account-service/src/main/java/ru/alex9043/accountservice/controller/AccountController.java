@@ -13,7 +13,7 @@ import ru.alex9043.commondto.TokensResponseDTO;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/account")
+@RequestMapping("/api/v1/accounts")
 @RequiredArgsConstructor
 @Slf4j
 public class AccountController {
@@ -52,9 +52,8 @@ public class AccountController {
 
     @DeleteMapping("{accountId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccount(@PathVariable("accountId") UUID id) {
-        accountService.deleteAccount(id);
+    public AccountsResponseDto deleteAccount(@PathVariable("accountId") UUID id) {
+        return accountService.deleteAccount(id);
     }
 
     @PostMapping("register")

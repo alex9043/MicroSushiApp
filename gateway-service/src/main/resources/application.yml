@@ -12,24 +12,17 @@ spring:
         - id: account-service
           uri: lb://account-service
           predicates:
-            - Path=/api/v1/account/**
+            - Path=/api/v1/accounts/**
           filters:
             - name: CustomAuthFilter
               args:
-                validatePath: http://auth-service/api/v1/auth/validate-token
                 excludedPaths:
                   - method: POST
-                    path: /api/v1/account/register
+                    path: /api/v1/accounts/register
                   - method: POST
-                    path: /api/v1/account/login
+                    path: /api/v1/accounts/login
                   - method: POST
-                    path: /api/v1/account/refresh-token
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/v1/auth/**
-          filters:
-            - name: BlockPublicAccessFilter
+                    path: /api/v1/accounts/refresh-token
         - id: product-service
           uri: lb://product-service
           predicates:

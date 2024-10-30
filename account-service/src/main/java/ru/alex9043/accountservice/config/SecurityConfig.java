@@ -26,9 +26,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/account/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/account/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/account/refresh-token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/accounts/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/accounts/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/accounts/refresh-token").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

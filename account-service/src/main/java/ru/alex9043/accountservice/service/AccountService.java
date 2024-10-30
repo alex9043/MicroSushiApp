@@ -135,7 +135,9 @@ public class AccountService {
         return getAccounts();
     }
 
-    public void deleteAccount(UUID id) {
+    public AccountsResponseDto deleteAccount(UUID id) {
         accountRepository.deleteById(id);
+
+        return getAccounts();
     }
 }

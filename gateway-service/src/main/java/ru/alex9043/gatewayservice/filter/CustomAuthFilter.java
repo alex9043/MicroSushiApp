@@ -29,14 +29,14 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
             String path = exchange.getRequest().getURI().getPath();
             HttpMethod method = exchange.getRequest().getMethod();
 
-            System.out.println("Filter is started");
-
             boolean isExcluded = config.getExcludedPaths().stream()
                     .anyMatch(excluded -> path.startsWith(excluded.getPath()) && method == excluded.getMethod());
 
             if (isExcluded) {
                 return chain.filter(exchange);
             }
+
+            System.out.println("Filter is started");
 
             String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -58,16 +58,7 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
     }
 
     public static class Config {
-        private String validatePath;
         private List<ExcludedPath> excludedPaths;
-
-        public String getValidatePath() {
-            return validatePath;
-        }
-
-        public void setValidatePath(String validatePath) {
-            this.validatePath = validatePath;
-        }
 
         public List<ExcludedPath> getExcludedPaths() {
             return excludedPaths;
