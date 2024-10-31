@@ -9,6 +9,10 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: account-service-api-docs
+          uri: lb://account-service
+          predicates:
+            - Path=/account-service/v3/api-docs
         - id: account-service
           uri: lb://account-service
           predicates:
@@ -23,6 +27,10 @@ spring:
                     path: /api/v1/accounts/login
                   - method: POST
                     path: /api/v1/accounts/refresh-token
+        - id: product-service-api-docs
+          uri: lb://product-service
+          predicates:
+            - Path=/product-service/v3/api-docs
         - id: product-service
           uri: lb://product-service
           predicates:
@@ -57,3 +65,12 @@ logging:
     name: /var/log/${spring.application.name}/${spring.application.name}.log
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: Account Service
+        url: /account-service/v3/api-docs
+      - name: Product Service
+        url: /product-service/v3/api-docs
