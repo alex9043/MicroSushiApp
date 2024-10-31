@@ -1,17 +1,28 @@
 package ru.alex9043.commondto;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class UserRequestDTO {
+    private UUID id;
     private String username;
     private Set<String> roles;
 
     public UserRequestDTO() {
     }
 
-    public UserRequestDTO(String username, Set<String> roles) {
+    public UserRequestDTO(UUID id, String username, Set<String> roles) {
+        this.id = id;
         this.username = username;
         this.roles = roles;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getUsername() {

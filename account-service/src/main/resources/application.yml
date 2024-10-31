@@ -42,3 +42,7 @@ management:
 logging:
   file:
     name: /var/log/${spring.application.name}/${spring.application.name}.log
+  level:
+    ru:
+      alex9043:
+        accountservice: DEBUG

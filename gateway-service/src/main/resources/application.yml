@@ -26,14 +26,17 @@ spring:
         - id: product-service
           uri: lb://product-service
           predicates:
-            - Path=/api/v1/product/**
+            - Path=/api/v1/products/**
           filters:
             - name: CustomAuthFilter
               args:
-                validatePath: http://auth-service/api/v1/auth/validate-token
                 excludedPaths:
                   - method: GET
-                    path: /api/v1/product
+                    path: /api/v1/products
+                  - method: GET
+                    path: /api/v1/categories
+                  - method: GET
+                    path: /api/v1/ingredients
 server:
   port: 8080
 eureka:

@@ -22,18 +22,21 @@ public class AccountController {
 
     @GetMapping("/self")
     public AccountsResponseDto.AccountResponseDto getAccount(@RequestHeader("Authorization") String token) {
+        log.info("Received request for account details with token.");
         return accountService.getAccount(token);
     }
 
     @GetMapping("{accountId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public AccountsResponseDto.AccountResponseDto getAccountForAdmin(@PathVariable("accountId") UUID id) {
+        log.info("Received admin request for account with ID: {}", id);
         return accountService.getAccountForAdmin(id);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public AccountsResponseDto getAccounts() {
+        log.info("Received request to get all accounts.");
         return accountService.getAccounts();
     }
 
@@ -41,34 +44,40 @@ public class AccountController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public AccountsResponseDto createAccount(@Valid @RequestBody AccountRequestDto accountRequestDto) {
+        log.info("Received request to create a new account.");
         return accountService.createAccount(accountRequestDto);
     }
 
     @PutMapping("{accountId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public AccountsResponseDto updateAccount(@PathVariable("accountId") UUID id, @Valid @RequestBody AccountRequestDto accountRequestDto) {
+        log.info("Received request to update account with id - {}", id);
         return accountService.updateAccount(id, accountRequestDto);
     }
 
     @DeleteMapping("{accountId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public AccountsResponseDto deleteAccount(@PathVariable("accountId") UUID id) {
+        log.info("Received request to delete account with id - {}", id);
         return accountService.deleteAccount(id);
     }
 
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     public TokensResponseDTO register(@Valid @RequestBody RegisterRequestDto registerRequestDTO) {
+        log.info("Received request to register");
         return accountService.register(registerRequestDTO);
     }
 
     @PostMapping("login")
     public TokensResponseDTO login(@Valid @RequestBody LoginRequestDto registerRequestDTO) {
+        log.info("Received request to login");
         return accountService.login(registerRequestDTO);
     }
 
     @PostMapping("refresh-token")
     public TokensResponseDTO refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {
+        log.info("Received request to refresh token");
         return accountService.refreshToken(refreshTokenDto);
     }
 }

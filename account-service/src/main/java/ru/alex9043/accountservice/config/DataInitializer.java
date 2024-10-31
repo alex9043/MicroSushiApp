@@ -1,5 +1,6 @@
 package ru.alex9043.accountservice.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Configuration
+@Slf4j
 public class DataInitializer {
     @Bean
     public CommandLineRunner initAdmin(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
@@ -26,6 +28,9 @@ public class DataInitializer {
                 admin.setRoles(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN));
 
                 accountRepository.save(admin);
+                log.info("Admin account created with email: admin@example.com");
+            } else {
+                log.info("Admin account already exists, skipping creation.");
             }
         };
     }

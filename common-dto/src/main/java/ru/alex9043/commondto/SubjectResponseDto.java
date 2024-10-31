@@ -1,17 +1,28 @@
 package ru.alex9043.commondto;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SubjectResponseDto {
+    private UUID id;
     private String subject;
     private List<String> roles;
 
     public SubjectResponseDto() {
     }
 
-    public SubjectResponseDto(String subject, List<String> roles) {
+    public SubjectResponseDto(UUID id, String subject, List<String> roles) {
+        this.id = id;
         this.subject = subject;
         this.roles = roles;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getSubject() {

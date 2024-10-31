@@ -31,3 +31,7 @@ logging:
     name: /var/log/${spring.application.name}/${spring.application.name}.log
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  level:
+    ru:
+      alex9043:
+        authservice: DEBUG

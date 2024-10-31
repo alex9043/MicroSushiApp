@@ -1,0 +1,44 @@
+<configuration>
+    <appender name="JSON_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/gateway-service/gateway-service.log</file>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <loggerName/>
+                <threadName/>
+                <message/>
+                <context/>
+                <mdc key="customTag"/>
+                <callerData/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <loggerName/>
+                <threadName/>
+                <message/>
+                <context/>
+                <mdc key="customTag"/>
+                <callerData/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="JSON_CONSOLE"/>
+    </root>
+
+    <logger name="ru.alex9043.accountservice" level="DEBUG" additivity="false">
+        <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="JSON_CONSOLE"/>
+    </logger>
+</configuration>
