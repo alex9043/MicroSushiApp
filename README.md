@@ -16,6 +16,8 @@ docker compose up
 ```
 ## Endpoints
 ### account-service
+OpenAPI documentation JSON - `http://localhost:8080/api/v1/accounts/api-docs`
+OpenAPI Swagger - `http://localhost:8080/api/v1/accounts/swagger-ui/index.html`
 #### POST `/api/v1/accounts/register` - registration
 Body
 ```JSON
@@ -87,6 +89,9 @@ Body
 #### DELETE `/api/v1/accounts/{accountId}` - get account (Authentication Bearer and ROLE_ADMIN required)
 
 ### product-service
+
+OpenAPI documentation JSON - `http://localhost:8080/api/v1/products/api-docs`
+OpenAPI Swagger - `http://localhost:8080/api/v1/products/swagger-ui/index.html`
 
 #### _Products_
 

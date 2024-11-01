@@ -47,5 +47,7 @@ logging:
       alex9043:
         accountservice: DEBUG
 springdoc:
+  api-docs:
+    path: /api/v1/accounts/api-docs
   swagger-ui:
-    path: /v3/api-docs
+    path: /api/v1/accounts/swagger-ui

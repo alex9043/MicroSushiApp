@@ -128,8 +128,6 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
-    ports:
-      - "8081:8081"
     deploy:
       replicas: 3
       restart_policy:

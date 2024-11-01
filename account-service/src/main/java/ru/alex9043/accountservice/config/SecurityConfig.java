@@ -26,8 +26,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/v1/accounts/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/v1/accounts/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/accounts/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/accounts/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/accounts/refresh-token").permitAll()

@@ -45,5 +45,7 @@ logging:
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 springdoc:
+  api-docs:
+    path: /api/v1/products/api-docs
   swagger-ui:
-    path: /v3/api-docs
+    path: /api/v1/products/swagger-ui
