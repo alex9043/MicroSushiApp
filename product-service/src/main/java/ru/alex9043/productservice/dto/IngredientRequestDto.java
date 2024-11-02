@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class IngredientRequestDto {
     @NotBlank(message = "Name is required")
-    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
+    @Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")
     private String name;
 }

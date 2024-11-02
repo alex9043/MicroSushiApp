@@ -1,4 +1,4 @@
-package ru.alex9043.productservice.model;
+package ru.alex9043.addressservice.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,8 +17,8 @@ import java.util.UUID;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "ingredient")
-public class Ingredient {
+@Table(name = "district")
+public class District {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -27,9 +27,8 @@ public class Ingredient {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "ingredients")
-    @ToString.Exclude
-    private Set<Product> products = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Address> addresses = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {
@@ -38,8 +37,8 @@ public class Ingredient {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Ingredient that = (Ingredient) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+        District district = (District) o;
+        return getId() != null && Objects.equals(getId(), district.getId());
     }
 
     @Override

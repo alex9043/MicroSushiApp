@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Data
 public class AccountRequestDto {
-    @Size(message = "Name must be between 2 and 50 characters", min = 2, max = 50)
+    @Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")
     @NotBlank(message = "Name is required")
     private String name;
     @Pattern(message = "Invalid phone number format",
@@ -22,7 +22,7 @@ public class AccountRequestDto {
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
-    @Size(message = "Password must be longer than 7 characters", min = 8)
+    @Size(min = 8, max = 255, message = "Name must be between 8 and 255 characters")
     @NotBlank(message = "Password is required")
     private String password;
     private Set<Role> roles;

@@ -116,6 +116,7 @@ services:
       - ./logs/account-service:/var/log/account-service
     networks:
       - app-network
+      - account-db-network
     depends_on:
       - registry-service
       - account-bd
@@ -147,7 +148,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=MSA_account_db
     networks:
-      - app-network
+      - account-db-network
   auth-service:
     build:
       context: ./auth-service
@@ -182,6 +183,7 @@ services:
       - ./logs/product-service:/var/log/product-service
     networks:
       - app-network
+      - product-db-network
     depends_on:
       - registry-service
       - product-bd
@@ -213,9 +215,13 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=MSA_product_db
     networks:
-      - app-network
+      - product-db-network
 networks:
   app-network:
+    driver: bridge
+  account-db-network:
+    driver: bridge
+  product-db-network:
     driver: bridge
 volumes:
   ssh-keys:

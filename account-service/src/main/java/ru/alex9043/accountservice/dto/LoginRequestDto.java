@@ -11,7 +11,7 @@ public class LoginRequestDto {
             regexp = "^([+]?\\d{1,2}[-\\s]?|)\\d{3}[-\\s]?\\d{3}[-\\s]?\\d{4}$")
     @NotBlank(message = "Phone number is required")
     private String phone;
-    @Size(message = "Password must be longer than 7 characters", min = 8)
+    @Size(min = 8, max = 255, message = "Name must be between 8 and 255 characters")
     @NotBlank(message = "Password is required")
     private String password;
 }
