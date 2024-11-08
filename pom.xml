@@ -21,6 +21,7 @@
         <module>account-service</module>
         <module>auth-service</module>
         <module>product-service</module>
+        <module>address-service</module>
     </modules>
     <properties>
         <java.version>17</java.version>

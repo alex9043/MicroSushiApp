@@ -216,12 +216,55 @@ services:
       - POSTGRES_DB=MSA_product_db
     networks:
       - product-db-network
+  address-service:
+    build:
+      context: ./address-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs/address-service:/var/log/address-service
+    networks:
+      - app-network
+      - address-db-network
+    depends_on:
+      - registry-service
+      - address-bd
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
+      - POSTGRES_URL=address-bd
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=MSA_address_db
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
+  address-bd:
+    image: postgres
+    restart: always
+    ports:
+      - "54323:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=MSA_address_db
+    networks:
+      - address-db-network
 networks:
   app-network:
     driver: bridge
   account-db-network:
     driver: bridge
   product-db-network:
+    driver: bridge
+  address-db-network:
     driver: bridge
 volumes:
   ssh-keys:

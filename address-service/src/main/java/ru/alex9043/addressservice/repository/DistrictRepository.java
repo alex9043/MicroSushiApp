@@ -6,4 +6,5 @@ import ru.alex9043.addressservice.model.District;
 import java.util.UUID;
 
 public interface DistrictRepository extends JpaRepository<District, UUID> {
+    boolean existsByName(String name);
 }

@@ -41,6 +41,16 @@ spring:
                     path: /api/v1/categories
                   - method: GET
                     path: /api/v1/ingredients
+        - id: address-service
+          uri: lb://address-service
+          predicates:
+            - Path=/api/v1/addresses/**
+          filters:
+            - name: CustomAuthFilter
+              args:
+                excludedPaths:
+                  - method: GET
+                    path: /api/v1/addresses/districts
 server:
   port: 8080
 eureka:

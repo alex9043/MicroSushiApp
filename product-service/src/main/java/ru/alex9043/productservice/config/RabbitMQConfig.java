@@ -9,6 +9,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 @Configuration
 public class RabbitMQConfig {
@@ -37,6 +40,15 @@ public class RabbitMQConfig {
         template.setExchange(AUTH_EXCHANGE_NAME);
 
         template.setMessageConverter(jackson2JsonMessageConverter());
+
+        RetryTemplate retryTemplate = new RetryTemplate();
+        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
+        backOffPolicy.setBackOffPeriod(2000); // 2 seconds delay between attempts
+        retryTemplate.setBackOffPolicy(backOffPolicy);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(3); // 3 attempts
+        retryTemplate.setRetryPolicy(retryPolicy);
+
+        template.setRetryTemplate(retryTemplate);
 
         return template;
     }

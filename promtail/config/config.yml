@@ -41,3 +41,9 @@ scrape_configs:
         labels:
           job: "product-service"
           __path__: "/var/log/microservices_logs/product-service/product-service.log"
+  - job_name: "address-service"
+    static_configs:
+      - targets: [ ]
+        labels:
+          job: "address-service"
+          __path__: "/var/log/microservices_logs/address-service/address-service.log"

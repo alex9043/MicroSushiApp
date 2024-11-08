@@ -88,6 +88,6 @@ public class JwtUtils {
     public SubjectResponseDto getSubject(TokenRequestDto token) {
         Claims claims = extractClaims(token);
         log.debug("Extracted claims from token: {}", claims);
-        return new SubjectResponseDto(claims.get("id", UUID.class), claims.getSubject(), claims.get("roles", List.class));
+        return new SubjectResponseDto(UUID.fromString(claims.get("id", String.class)), claims.getSubject(), claims.get("roles", List.class));
     }
 }
