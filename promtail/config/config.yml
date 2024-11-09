@@ -48,3 +48,10 @@ scrape_configs:
         labels:
           job: "address-service"
           __path__: "/var/log/microservices_logs/address-service/address-service.log"
+
+  - job_name: "cart-service"
+    static_configs:
+      - targets: [ ]
+        labels:
+          job: "cart-service"
+          __path__: "/var/log/microservices_logs/cart-service/cart-service.log"
