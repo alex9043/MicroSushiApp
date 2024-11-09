@@ -51,6 +51,10 @@ spring:
                 excludedPaths:
                   - method: GET
                     path: /api/v1/addresses/districts
+                  - method: GET
+                    path: /api/v1/addresses/api-docs
+                  - method: GET
+                    path: /api/v1/addresses/swagger-ui
 server:
   port: 8080
 eureka:

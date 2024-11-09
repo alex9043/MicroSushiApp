@@ -31,7 +31,7 @@ eureka:
 server:
   port: 8084
 management:
-  endpoint:
+  endpoints:
     web:
       exposure:
         include: "*"
