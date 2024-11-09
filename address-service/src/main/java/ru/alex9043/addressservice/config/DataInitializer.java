@@ -14,11 +14,12 @@ import java.util.List;
 public class DataInitializer {
     @Bean
     public CommandLineRunner initDistricts(DistrictRepository districtRepository) {
+        log.info("Initializing districts data...");
         return args -> {
-            if (districtRepository.existsByName("Выборгский") ||
-                    districtRepository.existsByName("Калининский") ||
-                    districtRepository.existsByName("Центральный") ||
-                    districtRepository.existsByName("Приморский")) {
+            if (districtRepository.findByName("Выборгский").isEmpty() ||
+                    districtRepository.findByName("Калининский").isEmpty() ||
+                    districtRepository.findByName("Центральный").isEmpty() ||
+                    districtRepository.findByName("Приморский").isEmpty()) {
                 District district1 = new District();
                 District district2 = new District();
                 District district3 = new District();

@@ -103,10 +103,15 @@ public class AddressService {
             saveAddressFields(addressRequestDTO, address);
         } else {
             try {
+                UUID id = getAccountID(token);
+                if (!addressRequestDTO.getAccountId().equals(id)) {
+                    log.error("Unauthorized access to address ID: {}", addressRequestDTO.getAccountId());
+                    throw new SecurityException("Unauthorized access");
+                }
                 Address address = new Address();
                 address.setId(null);
                 address.setDistrict(districtService.findById(addressRequestDTO.getDistrictId()));
-                address.setAccountId(getAccountID(token));
+                address.setAccountId(id);
                 saveAddressFields(addressRequestDTO, address);
             } catch (Exception e) {
                 log.error("Failed to create address: {}", e.getMessage(), e);

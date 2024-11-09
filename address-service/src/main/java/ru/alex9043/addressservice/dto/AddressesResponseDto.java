@@ -22,8 +22,8 @@ public class AddressesResponseDto {
         private Integer houseNumber;
         private Integer building;
         private Integer entrance;
-        private String floor;
-        private String apartmentNumber;
+        private Integer floor;
+        private Integer apartmentNumber;
         private UUID accountId;
         private DistrictsResponseDto.DistrictResponseDto district;
     }
