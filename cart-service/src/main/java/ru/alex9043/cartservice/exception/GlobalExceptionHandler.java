@@ -1,4 +1,4 @@
-package ru.alex9043.accountservice.exception;
+package ru.alex9043.cartservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.alex9043.accountservice.dto.error.ErrorsResponse;
-import ru.alex9043.accountservice.dto.error.JwtValidationException;
+import ru.alex9043.cartservice.dto.error.ErrorsResponse;
+import ru.alex9043.cartservice.dto.error.JwtValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;

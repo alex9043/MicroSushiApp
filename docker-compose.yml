@@ -257,6 +257,47 @@ services:
       - POSTGRES_DB=MSA_address_db
     networks:
       - address-db-network
+  cart-service:
+    build:
+      context: ./cart-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs/cart-service:/var/log/cart-service
+    networks:
+      - app-network
+      - cart-db-network
+    depends_on:
+      - registry-service
+      - cart-bd
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-service:8761/eureka
+      - POSTGRES_URL=cart-bd
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=MSA_cart_db
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
+  cart-bd:
+    image: postgres
+    restart: always
+    ports:
+      - "54323:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=MSA_cart_db
+    networks:
+      - cart-db-network
 networks:
   app-network:
     driver: bridge
@@ -265,6 +306,8 @@ networks:
   product-db-network:
     driver: bridge
   address-db-network:
+    driver: bridge
+  cart-db-network:
     driver: bridge
 volumes:
   ssh-keys:

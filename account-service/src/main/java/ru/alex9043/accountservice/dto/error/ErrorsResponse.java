@@ -1,4 +1,4 @@
-package ru.alex9043.accountservice.dto;
+package ru.alex9043.accountservice.dto.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

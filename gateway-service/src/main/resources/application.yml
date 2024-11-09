@@ -55,6 +55,18 @@ spring:
                     path: /api/v1/addresses/api-docs
                   - method: GET
                     path: /api/v1/addresses/swagger-ui
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/v1/cart/**
+          filters:
+            - name: CustomAuthFilter
+              args:
+                excludedPaths:
+                  - method: GET
+                    path: /api/v1/addresses/api-docs
+                  - method: GET
+                    path: /api/v1/addresses/swagger-ui
 server:
   port: 8080
 eureka:
